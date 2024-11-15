@@ -55,9 +55,9 @@ class BinaryNode(Node):
 
 class BinaryTree:
 
-    def __init__(self, max_children=2):
+    def __init__(self):
         self._root_node = None
-        self._max_children = max_children
+        self._max_children = 2
 
     def insert(self, value):
         if self._root_node is None:
@@ -85,13 +85,34 @@ class BinaryTree:
         levels = [node_stack]
         node_idx = 0
         level_idx = 0
-        while True:
-            while level_idx < len(levels):
-                while node_idx < len(levels[level_idx]):
-                    # add the children of the current node to the next level of the stack
-                    cur_node = node_stack[0]
-                    node_stack = node_stack[1:]
-                    if cur_node.left_child is not None:
-                        node_stack.append(cur_node.left_child)
-                        levels[level_idx].append(cur_node.left_child)
+        # while True:
+        while level_idx < len(levels):
+            node_idx = 0
+            if len(levels[level_idx]) > 0:
+                levels.append([])
+            while node_idx < len(levels[level_idx]):
+                # add the children of the current node to the next level of the stack
+                cur_node = levels[level_idx][node_idx]
+                if cur_node.left_child is not None:
+                    levels[level_idx + 1].append(cur_node.left_child)
+                if cur_node.right_child is not None:
+                    levels[level_idx + 1].append(cur_node.right_child)
+                node_idx += 1
+            level_idx += 1
+        level_idx -= 1
+        if len(levels[level_idx]) == 0:
+            levels = levels[:level_idx]
+        
+        outstr = []
+        for level in levels:
+            for ni, node in enumerate(level):
+                if ni > 0:
+                    outstr.append(' | ')
+                outstr.append(str(node.value))
+            outstr.append('\n')
 
+        return ''.join(outstr)
+
+    @property
+    def root(self):
+        return self._root_node
